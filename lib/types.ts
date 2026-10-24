@@ -29,13 +29,30 @@ export interface Notificacion {
   leida: boolean
   creadaEn: string
   afectacionId?: string
+  tipo: TipoAfectacion
   esDatoSimulado: true
+}
+
+export interface ZonaHabitual {
+  id: string
+  nombre: string
+  latitud: number
+  longitud: number
+  radioM: number
+  origen: 'lista' | 'mapa'
+}
+
+export interface ModosAviso {
+  appAbierta: boolean
+  zonasHabituales: boolean
+  alAcercarme: boolean
 }
 
 export interface Preferencias {
   recibirNotificaciones: boolean
   tiposSeguidos: TipoAfectacion[]
-  zonasSeguidas: string[]
+  zonasHabituales: ZonaHabitual[]
+  modosAviso: ModosAviso
   radioAnticipacionM?: number
   soloAltoImpacto?: boolean
 }

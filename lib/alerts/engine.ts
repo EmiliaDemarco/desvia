@@ -1,4 +1,4 @@
-import type { Afectacion, Preferencias } from '../types'
+import type { Afectacion, Preferencias, ZonaHabitual } from '../types'
 
 export interface Coordenada {
   latitud: number
@@ -33,6 +33,10 @@ export function distanciaHaversineM(a: Coordenada, b: Coordenada): number {
   return 2 * RADIO_TIERRA_M * Math.asin(Math.min(1, Math.sqrt(h)))
 }
 
+export function afectacionEnZonas(punto: Coordenada, zonas: ZonaHabitual[]): boolean {
+  return zonas.some((zona) => distanciaHaversineM(zona, punto) <= zona.radioM)
+}
+
 // Cambios de horario o de impacto: lo que justifica una única alerta de "actualización".
 export function firmaAfectacion(afectacion: Afectacion): string {
   return `${afectacion.inicio}|${afectacion.fin ?? ''}|${afectacion.impacto}`
@@ -59,7 +63,8 @@ export function evaluarAlertas(
   yaNotificadas: YaNotificadas,
   ahora: Date = new Date(),
 ): AlertaEvaluada[] {
-  if (!preferencias.recibirNotificaciones) return []
+  // En el prototipo solo existe el aviso con la app abierta; los otros modos se guardan pero no generan alertas.
+  if (!preferencias.recibirNotificaciones || !preferencias.modosAviso.appAbierta) return []
   const radioM = preferencias.radioAnticipacionM ?? RADIO_ANTICIPACION_POR_DEFECTO_M
 
   const alertas: AlertaEvaluada[] = []

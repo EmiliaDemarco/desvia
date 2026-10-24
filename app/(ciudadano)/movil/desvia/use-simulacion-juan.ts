@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { evaluarAlertas, registrarNotificadas, type AlertaEvaluada, type YaNotificadas } from '@/lib/alerts/engine'
-import { AHORA_SIMULADO, INTERVALO_PASO_MS, posicionEnPaso, TOTAL_PASOS } from '@/lib/alerts/simulacion'
+import { AHORA_SIMULADO, INTERVALO_PASO_MS, MS_SIMULADOS_POR_PASO, posicionEnPaso, TOTAL_PASOS } from '@/lib/alerts/simulacion'
+import { registrarNotificacionesDeAlertas } from '@/lib/services/notificaciones'
 import type { Afectacion, Preferencias } from '@/lib/types'
 
 export type EstadoSimulacion = 'inactiva' | 'corriendo' | 'pausada' | 'finalizada'
@@ -31,6 +32,7 @@ export function useSimulacionJuan({ afectaciones, preferencias }: { afectaciones
     const resultado = evaluarAlertas(posicionEnPaso(pasoActual), actuales, prefs, notificadasRef.current, AHORA_SIMULADO)
     if (resultado.length === 0) return
     notificadasRef.current = registrarNotificadas(notificadasRef.current, resultado)
+    void registrarNotificacionesDeAlertas(resultado, new Date(AHORA_SIMULADO.getTime() + pasoActual * MS_SIMULADOS_POR_PASO))
     setAlerta({ principal: resultado[0], adicionales: resultado.length - 1 })
   }, [])
 

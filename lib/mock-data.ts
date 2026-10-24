@@ -1,4 +1,4 @@
-import type { Afectacion, Notificacion, Preferencias, SugerenciaIA } from './types'
+import type { Afectacion, Notificacion, Preferencias, SugerenciaIA, ZonaHabitual } from './types'
 
 export const afectacionesIniciales: Afectacion[] = [
   { id: 'af-001', titulo: 'Obra de mantenimiento vial', descripcion: 'Reducción de calzada por trabajos programados.', tipo: 'obra', estado: 'programada', impacto: 'medio', fuente: 'Secretaría de Obras (simulado)', confiabilidad: 'confirmada', direccion: 'Av. Pellegrini y Bv. Oroño', zona: 'Centro', latitud: -32.9555, longitud: -60.6513, inicio: '2026-10-25T08:00:00-03:00', fin: '2026-10-26T18:00:00-03:00', actualizadaEn: '2026-10-24T09:00:00-03:00', esDatoSimulado: true },
@@ -13,6 +13,32 @@ export const afectacionesIniciales: Afectacion[] = [
   { id: 'af-010', titulo: 'Flujo intenso', descripcion: 'Aumento estimado del tránsito en hora pico.', tipo: 'congestion', estado: 'programada', impacto: 'medio', fuente: 'Control de Tránsito (simulado)', confiabilidad: 'estimada', direccion: 'Av. Pellegrini y Entre Ríos', zona: 'Centro', latitud: -32.9518, longitud: -60.6511, inicio: '2026-10-24T17:00:00-03:00', actualizadaEn: '2026-10-24T09:30:00-03:00', esDatoSimulado: true },
 ]
 
-export const notificacionesIniciales: Notificacion[] = [{ id: 'not-001', titulo: 'Nueva afectación cerca tuyo', mensaje: 'Se registró una afectación simulada en el Centro.', leida: false, creadaEn: '2026-10-24T12:00:00-03:00', afectacionId: 'af-004', esDatoSimulado: true }]
-export const preferenciasIniciales: Preferencias = { recibirNotificaciones: true, tiposSeguidos: ['obra', 'corte', 'congestion', 'evento'], zonasSeguidas: ['Centro'], radioAnticipacionM: 1000, soloAltoImpacto: false }
+export const notificacionesIniciales: Notificacion[] = [
+  { id: 'not-001', titulo: 'Nueva afectación cerca tuyo', mensaje: 'Congestión vehicular en Córdoba y Corrientes. Demoras moderadas por alto flujo.', leida: false, creadaEn: '2026-10-24T12:00:00-03:00', afectacionId: 'af-004', tipo: 'congestion', esDatoSimulado: true },
+  { id: 'not-002', titulo: 'Corte total en Pichincha', mensaje: 'Corte por reparación en Av. Francia y Córdoba, estimado hasta las 17:00.', leida: false, creadaEn: '2026-10-24T11:35:00-03:00', afectacionId: 'af-003', tipo: 'corte', esDatoSimulado: true },
+  { id: 'not-003', titulo: 'Evento en Parque Independencia', mensaje: 'Circulación intensa y cortes parciales en los accesos al parque.', leida: true, creadaEn: '2026-10-24T10:05:00-03:00', afectacionId: 'af-002', tipo: 'evento', esDatoSimulado: true },
+  { id: 'not-004', titulo: 'Obra programada para mañana', mensaje: 'Reducción de calzada en Av. Pellegrini y Bv. Oroño desde las 08:00.', leida: true, creadaEn: '2026-10-23T16:30:00-03:00', afectacionId: 'af-001', tipo: 'obra', esDatoSimulado: true },
+  { id: 'not-005', titulo: 'Accidente resuelto', mensaje: 'Se normalizó la circulación en Bv. Oroño y San Luis.', leida: true, creadaEn: '2026-10-23T20:35:00-03:00', afectacionId: 'af-007', tipo: 'accidente', esDatoSimulado: true },
+  { id: 'not-006', titulo: 'Poda finalizada', mensaje: 'Terminaron los trabajos de arbolado en Av. Pellegrini al 1800.', leida: true, creadaEn: '2026-10-23T13:05:00-03:00', afectacionId: 'af-006', tipo: 'poda', esDatoSimulado: true },
+]
+
+// Ubicaciones aproximadas. DATO SIMULADO.
+export const zonasPredefinidas: ZonaHabitual[] = [
+  { id: 'zona-centro', nombre: 'Centro', latitud: -32.9468, longitud: -60.6393, radioM: 500, origen: 'lista' },
+  { id: 'zona-parque-independencia', nombre: 'Parque Independencia', latitud: -32.958, longitud: -60.659, radioM: 500, origen: 'lista' },
+  { id: 'zona-pichincha', nombre: 'Pichincha', latitud: -32.942, longitud: -60.668, radioM: 500, origen: 'lista' },
+  { id: 'zona-echesortu', nombre: 'Echesortu', latitud: -32.933, longitud: -60.677, radioM: 500, origen: 'lista' },
+  { id: 'zona-monumento', nombre: 'Monumento', latitud: -32.9477, longitud: -60.6304, radioM: 500, origen: 'lista' },
+  { id: 'zona-abasto', nombre: 'Abasto', latitud: -32.9601, longitud: -60.6518, radioM: 500, origen: 'lista' },
+  { id: 'zona-lourdes', nombre: 'Lourdes', latitud: -32.9438, longitud: -60.6602, radioM: 500, origen: 'lista' },
+]
+
+export const preferenciasIniciales: Preferencias = {
+  recibirNotificaciones: true,
+  tiposSeguidos: ['obra', 'corte', 'congestion', 'evento'],
+  zonasHabituales: [zonasPredefinidas[0]],
+  modosAviso: { appAbierta: true, zonasHabituales: false, alAcercarme: false },
+  radioAnticipacionM: 1000,
+  soloAltoImpacto: false,
+}
 export const sugerenciasIniciales: SugerenciaIA[] = [{ id: 'sug-001', afectacionId: 'af-004', texto: 'Considerar una comunicación preventiva para quienes circulen por el Centro.', estado: 'pendiente', creadaEn: '2026-10-24T12:00:00-03:00', esDatoSimulado: true }]

@@ -33,6 +33,6 @@ export const useDemoStore = create<DemoStore>()(persist((set) => ({
   resetDemo: () => set({ afectaciones: afectacionesIniciales, notificaciones: notificacionesIniciales, preferencias: preferenciasIniciales, historial: [], sugerencias: sugerenciasIniciales }),
 }), {
   name: 'desvia-demo-store',
-  version: 2,
-  migrate: (persisted) => ({ ...(persisted as DemoStore), preferencias: preferenciasIniciales }),
+  version: 3,
+  migrate: (persisted) => ({ ...(persisted as DemoStore), preferencias: preferenciasIniciales, notificaciones: notificacionesIniciales }),
 }))
