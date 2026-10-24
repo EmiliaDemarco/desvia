@@ -7,3 +7,6 @@
 .marker-bajo-activa, .marker-bajo-programada { background: #2563eb; }
 .marker-resuelta { background: #64748b; }
 .marker-cancelada { background: #94a3b8; }
+.juan-marker { background: transparent; border: 0; }
+.juan-dot { position: absolute; left: 12px; top: 12px; height: 20px; width: 20px; border: 3px solid white; border-radius: 999px; background: #1551A1; box-shadow: 0 0 0 4px rgb(21 81 161 / 25%), 0 2px 8px rgb(15 23 42 / 40%); }
+.juan-label { position: absolute; left: 50%; top: -4px; transform: translateX(-50%); border-radius: 999px; background: #1551A1; padding: 1px 8px; color: white; font-size: 11px; font-weight: 700; }

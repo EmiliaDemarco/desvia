@@ -3,21 +3,139 @@
 import dynamic from 'next/dynamic'
 import { useMemo, useState } from 'react'
 import { Bell, Crosshair, Home, MapPinned, Menu, UserRound, X } from 'lucide-react'
-import { afectacionesIniciales } from '@/lib/mock-data'
+import { distanciaHaversineM, RADIO_ANTICIPACION_POR_DEFECTO_M } from '@/lib/alerts/engine'
+import { RUTA_PELLEGRINI } from '@/lib/alerts/simulacion'
+import { useDemoStore } from '@/lib/store'
 import type { Afectacion, Estado, TipoAfectacion } from '@/lib/types'
+import { AlertaBanner } from './alerta-banner'
+import { ControlSimulacion } from './control-simulacion'
+import { useSimulacionJuan } from './use-simulacion-juan'
 import 'leaflet/dist/leaflet.css'
 import '../movil.css'
 
 const Mapa = dynamic(() => import('./mapa'), { ssr: false, loading: () => <div className="flex h-full min-h-[430px] items-center justify-center bg-slate-100 text-sm text-slate-500">Cargando mapa simulado…</div> })
+const CENTRO_ROSARIO: [number, number] = [-32.9468, -60.6393]
 const tipos: Array<TipoAfectacion | 'todas'> = ['todas', 'obra', 'corte', 'poda', 'accidente', 'congestion', 'evento']
 const estados: Array<Estado | 'todos'> = ['todos', 'activa', 'programada', 'resuelta', 'cancelada']
 const etiqueta = (valor: string) => valor.charAt(0).toUpperCase() + valor.slice(1)
-const distancia = (a: Afectacion, origen: [number, number]) => Math.sqrt(((a.latitud - origen[0]) * 111) ** 2 + ((a.longitud - origen[1]) * 92) ** 2) * 1000
 
 export default function DesviaPage() {
-  const [tipo, setTipo] = useState<TipoAfectacion | 'todas'>('todas'); const [estado, setEstado] = useState<Estado | 'todos'>('todos'); const [seleccionada, setSeleccionada] = useState<Afectacion>(); const [ubicacion, setUbicacion] = useState<[number, number] | null>(null); const [mensaje, setMensaje] = useState('')
-  const filtradas = useMemo(() => afectacionesIniciales.filter((a) => (tipo === 'todas' || a.tipo === tipo) && (estado === 'todos' || a.estado === estado)), [tipo, estado]); const origen = ubicacion ?? [-32.9468, -60.6393] as [number, number]; const cercanas = filtradas.map((a) => ({ a, d: distancia(a, origen) })).filter(({ d }) => d < 1000).sort((x, y) => x.d - y.d); const pedirUbicacion = () => { if (!navigator.geolocation) return setMensaje('Ubicación no disponible; seguimos mostrando el centro de Rosario.'); navigator.geolocation.getCurrentPosition((p) => { setUbicacion([p.coords.latitude, p.coords.longitude]); setMensaje('Ubicación aproximada activa para esta maqueta.'); }, () => setMensaje('No se concedió permiso; seguimos mostrando el centro de Rosario.')) }
-  return <div className="mobile-shell"><header className="flex items-center justify-between bg-[#08A9D8] px-5 py-4 text-white"><button aria-label="Abrir menú"><Menu /></button><strong className="text-xl">TR-Móvil</strong><Bell /></header><main className="relative flex-1 overflow-auto bg-white"><div className="flex items-center justify-between bg-slate-100 px-5 py-4"><div><p className="text-xs font-bold uppercase tracking-wider text-amber-700">DATOS SIMULADOS</p><h1 className="text-2xl font-black text-[#1551A1]">desv<span className="text-[#F26B1D]">IA</span></h1></div><button onClick={pedirUbicacion} className="flex items-center gap-2 rounded-full bg-[#1551A1] px-3 py-2 text-xs font-bold text-white"><Crosshair size={15} /> Usar mi ubicación</button></div><div className="space-y-3 border-b bg-white px-4 py-3"><div className="flex gap-2 overflow-x-auto pb-1">{tipos.map((item) => <button key={item} onClick={() => setTipo(item)} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold ${tipo === item ? 'border-[#1551A1] bg-[#1551A1] text-white' : 'border-slate-200 text-slate-600'}`}>{etiqueta(item)}</button>)}</div><div className="flex gap-2 overflow-x-auto">{estados.map((item) => <button key={item} onClick={() => setEstado(item)} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold ${estado === item ? 'border-[#F26B1D] bg-orange-50 text-[#C65211]' : 'border-slate-200 text-slate-600'}`}>{etiqueta(item)}</button>)}</div></div><div className="h-[430px]"><Mapa afectaciones={filtradas} seleccionada={seleccionada} onSeleccionar={setSeleccionada} ubicacion={ubicacion} /></div>{mensaje && <p className="px-5 py-2 text-xs text-slate-500">{mensaje}</p>}<section className="space-y-3 px-5 py-5"><div><h2 className="text-lg font-bold text-slate-900">Cerca tuyo</h2><p className="text-sm text-slate-500">{cercanas.length} afectaciones a menos de 1000 m · centro de mapa</p></div>{cercanas.slice(0, 3).map(({ a, d }) => <button key={a.id} onClick={() => setSeleccionada(a)} className="flex w-full items-center justify-between border-b py-3 text-left"><span><strong className="block text-sm text-slate-900">{a.titulo}</strong><small className="text-xs text-slate-500">{a.direccion} · {Math.round(d)} m</small></span><span className="text-xs font-bold text-[#1551A1]">{etiqueta(a.estado)}</span></button>)}<p className="pt-2 text-xs text-slate-400">Actualizado: 24/10 12:17 · DATO SIMULADO</p></section>{seleccionada && <Detalle afectacion={seleccionada} cerrar={() => setSeleccionada(undefined)} />}</main><nav className="grid grid-cols-5 border-t bg-white px-2 py-2 text-[10px] text-slate-500"><span className="flex flex-col items-center gap-1 text-[#1551A1]"><Home size={18} />Inicio</span><span className="flex flex-col items-center gap-1"><MapPinned size={18} />Mapa</span><span className="flex flex-col items-center gap-1 font-black text-[#F26B1D]">⚠<span>desvIA</span></span><span className="flex flex-col items-center gap-1"><Bell size={18} />Avisos</span><span className="flex flex-col items-center gap-1"><UserRound size={18} />Perfil</span></nav><p className="bg-white px-4 py-2 text-center text-[10px] text-slate-400">Maqueta adaptable. No reproduce la interfaz real de TR-Móvil.</p></div>
+  const afectaciones = useDemoStore((estado) => estado.afectaciones)
+  const preferencias = useDemoStore((estado) => estado.preferencias)
+  const [tipo, setTipo] = useState<TipoAfectacion | 'todas'>('todas')
+  const [estado, setEstado] = useState<Estado | 'todos'>('todos')
+  const [seleccionada, setSeleccionada] = useState<Afectacion>()
+  const [ubicacion, setUbicacion] = useState<[number, number] | null>(null)
+  const [mensaje, setMensaje] = useState('')
+
+  const simulacion = useSimulacionJuan({ afectaciones, preferencias })
+  const radioM = preferencias.radioAnticipacionM ?? RADIO_ANTICIPACION_POR_DEFECTO_M
+
+  const filtradas = useMemo(() => afectaciones.filter((a) => (tipo === 'todas' || a.tipo === tipo) && (estado === 'todos' || a.estado === estado)), [afectaciones, tipo, estado])
+  const origen = simulacion.juan ?? ubicacion ?? CENTRO_ROSARIO
+  const origenEtiqueta = simulacion.juan ? 'recorrido simulado de Juan' : ubicacion ? 'tu ubicación' : 'centro del mapa'
+  const cercanas = useMemo(
+    () =>
+      filtradas
+        .map((a) => ({ a, d: distanciaHaversineM({ latitud: origen[0], longitud: origen[1] }, a) }))
+        .filter(({ d }) => d < 1000)
+        .sort((x, y) => x.d - y.d),
+    [filtradas, origen],
+  )
+
+  const pedirUbicacion = () => {
+    if (!navigator.geolocation) return setMensaje('Ubicación no disponible; seguimos mostrando el centro de Rosario.')
+    navigator.geolocation.getCurrentPosition(
+      (p) => {
+        setUbicacion([p.coords.latitude, p.coords.longitude])
+        setMensaje('Ubicación aproximada activa para esta maqueta.')
+      },
+      () => setMensaje('No se concedió permiso; seguimos mostrando el centro de Rosario.'),
+    )
+  }
+
+  const verEnMapa = (afectacion: Afectacion) => {
+    setTipo('todas')
+    setEstado('todos')
+    setSeleccionada(afectacion)
+    simulacion.descartarAlerta()
+    document.getElementById('mapa-desvia')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  return (
+    <div className="mobile-shell">
+      <header className="flex items-center justify-between bg-[#08A9D8] px-5 py-4 text-white">
+        <button aria-label="Abrir menú"><Menu /></button>
+        <strong className="text-xl">TR-Móvil</strong>
+        <Bell />
+      </header>
+      <main className="relative flex-1 overflow-auto bg-white">
+        <div className="sticky top-0 z-[1100] h-0">
+          {simulacion.alerta && (
+            <AlertaBanner alerta={simulacion.alerta} onVerEnMapa={() => verEnMapa(simulacion.alerta!.principal.afectacion)} onCerrar={simulacion.descartarAlerta} />
+          )}
+        </div>
+        <div className="flex items-center justify-between bg-slate-100 px-5 py-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-700">DATOS SIMULADOS</p>
+            <h1 className="text-2xl font-black text-[#1551A1]">desv<span className="text-[#F26B1D]">IA</span></h1>
+          </div>
+          <button onClick={pedirUbicacion} className="flex items-center gap-2 rounded-full bg-[#1551A1] px-3 py-2 text-xs font-bold text-white"><Crosshair size={15} /> Usar mi ubicación</button>
+        </div>
+        <div className="space-y-3 border-b bg-white px-4 py-3">
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {tipos.map((item) => (
+              <button key={item} onClick={() => setTipo(item)} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold ${tipo === item ? 'border-[#1551A1] bg-[#1551A1] text-white' : 'border-slate-200 text-slate-600'}`}>{etiqueta(item)}</button>
+            ))}
+          </div>
+          <div className="flex gap-2 overflow-x-auto">
+            {estados.map((item) => (
+              <button key={item} onClick={() => setEstado(item)} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold ${estado === item ? 'border-[#F26B1D] bg-orange-50 text-[#C65211]' : 'border-slate-200 text-slate-600'}`}>{etiqueta(item)}</button>
+            ))}
+          </div>
+        </div>
+        <ControlSimulacion estado={simulacion.estado} paso={simulacion.paso} totalPasos={simulacion.totalPasos} onIniciar={simulacion.iniciar} onAlternarPausa={simulacion.alternarPausa} />
+        <div id="mapa-desvia" className="h-[430px]">
+          <Mapa
+            afectaciones={filtradas}
+            seleccionada={seleccionada}
+            onSeleccionar={setSeleccionada}
+            ubicacion={ubicacion}
+            ruta={simulacion.estado === 'inactiva' ? undefined : RUTA_PELLEGRINI}
+            juan={simulacion.juan}
+            radioM={radioM}
+            reinicioId={simulacion.reinicioId}
+          />
+        </div>
+        {mensaje && <p className="px-5 py-2 text-xs text-slate-500">{mensaje}</p>}
+        <section className="space-y-3 px-5 py-5">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Cerca tuyo</h2>
+            <p className="text-sm text-slate-500">{cercanas.length} afectaciones a menos de 1000 m · {origenEtiqueta}</p>
+          </div>
+          {cercanas.slice(0, 3).map(({ a, d }) => (
+            <button key={a.id} onClick={() => setSeleccionada(a)} className="flex w-full items-center justify-between border-b py-3 text-left">
+              <span>
+                <strong className="block text-sm text-slate-900">{a.titulo}</strong>
+                <small className="text-xs text-slate-500">{a.direccion} · {Math.round(d)} m</small>
+              </span>
+              <span className="text-xs font-bold text-[#1551A1]">{etiqueta(a.estado)}</span>
+            </button>
+          ))}
+          <p className="pt-2 text-xs text-slate-400">Actualizado: 24/10 12:17 · DATO SIMULADO</p>
+        </section>
+        {seleccionada && <Detalle afectacion={seleccionada} cerrar={() => setSeleccionada(undefined)} />}
+      </main>
+      <nav className="grid grid-cols-5 border-t bg-white px-2 py-2 text-[10px] text-slate-500">
+        <span className="flex flex-col items-center gap-1 text-[#1551A1]"><Home size={18} />Inicio</span>
+        <span className="flex flex-col items-center gap-1"><MapPinned size={18} />Mapa</span>
+        <span className="flex flex-col items-center gap-1 font-black text-[#F26B1D]">⚠<span>desvIA</span></span>
+        <span className="flex flex-col items-center gap-1"><Bell size={18} />Avisos</span>
+        <span className="flex flex-col items-center gap-1"><UserRound size={18} />Perfil</span>
+      </nav>
+      <p className="bg-white px-4 py-2 text-center text-[10px] text-slate-400">Maqueta adaptable. No reproduce la interfaz real de TR-Móvil.</p>
+    </div>
+  )
 }
 
 function Detalle({ afectacion, cerrar }: { afectacion: Afectacion; cerrar: () => void }) { return <div className="absolute inset-x-0 bottom-0 z-[1000] max-h-[78%] overflow-auto rounded-t-3xl bg-white p-5 shadow-[0_-8px_30px_rgba(0,0,0,.18)]"><div className="mb-4 flex items-start justify-between"><div><p className="text-xs font-bold uppercase tracking-wider text-amber-700">DATO SIMULADO · {afectacion.confiabilidad}</p><h2 className="mt-1 text-xl font-bold text-slate-900">{afectacion.titulo}</h2></div><button onClick={cerrar} aria-label="Cerrar detalle"><X /></button></div><div className="grid grid-cols-2 gap-3 text-sm"><Info label="Tipo" value={afectacion.tipo} /><Info label="Estado" value={afectacion.estado} /><Info label="Impacto" value={afectacion.impacto} /><Info label="Dirección" value={afectacion.direccion} /><Info label="Inicio" value={new Date(afectacion.inicio).toLocaleString('es-AR')} /><Info label="Fin estimado" value={afectacion.fin ? new Date(afectacion.fin).toLocaleString('es-AR') : 'En curso'} /></div><p className="mt-4 text-sm leading-relaxed text-slate-600">{afectacion.descripcion}</p><div className="mt-4 rounded-xl bg-slate-100 p-4 text-xs text-slate-600"><p>Última actualización: {new Date(afectacion.actualizadaEn).toLocaleString('es-AR')}</p><p className="mt-1">Fuente: {afectacion.fuente}</p><p className="mt-1">Confiabilidad: <strong>{afectacion.confiabilidad}</strong></p></div></div> }

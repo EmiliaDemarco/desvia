@@ -14,5 +14,5 @@ export const afectacionesIniciales: Afectacion[] = [
 ]
 
 export const notificacionesIniciales: Notificacion[] = [{ id: 'not-001', titulo: 'Nueva afectación cerca tuyo', mensaje: 'Se registró una afectación simulada en el Centro.', leida: false, creadaEn: '2026-10-24T12:00:00-03:00', afectacionId: 'af-004', esDatoSimulado: true }]
-export const preferenciasIniciales: Preferencias = { recibirNotificaciones: true, tiposSeguidos: ['obra', 'corte', 'congestion'], zonasSeguidas: ['Centro'] }
+export const preferenciasIniciales: Preferencias = { recibirNotificaciones: true, tiposSeguidos: ['obra', 'corte', 'congestion', 'evento'], zonasSeguidas: ['Centro'], radioAnticipacionM: 1000, soloAltoImpacto: false }
 export const sugerenciasIniciales: SugerenciaIA[] = [{ id: 'sug-001', afectacionId: 'af-004', texto: 'Considerar una comunicación preventiva para quienes circulen por el Centro.', estado: 'pendiente', creadaEn: '2026-10-24T12:00:00-03:00', esDatoSimulado: true }]

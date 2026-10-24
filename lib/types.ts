@@ -36,6 +36,8 @@ export interface Preferencias {
   recibirNotificaciones: boolean
   tiposSeguidos: TipoAfectacion[]
   zonasSeguidas: string[]
+  radioAnticipacionM?: number
+  soloAltoImpacto?: boolean
 }
 
 export interface CambioHistorial {
