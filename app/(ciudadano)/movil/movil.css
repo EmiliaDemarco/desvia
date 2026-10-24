@@ -1,0 +1,9 @@
+@media (min-width: 768px) { .mobile-shell { width: 430px; min-height: 860px; margin: 2rem auto; border: 10px solid #111827; border-radius: 2.5rem; overflow: hidden; box-shadow: 0 25px 60px rgb(15 23 42 / 20%); } }
+.mobile-shell { display: flex; min-height: 100dvh; flex-direction: column; background: white; }
+.desvia-marker { background: transparent; border: 0; }
+.marker-dot { display: grid; height: 36px; width: 36px; place-items: center; border: 3px solid white; border-radius: 999px; color: white; font-size: 18px; font-weight: 900; box-shadow: 0 2px 8px rgb(15 23 42 / 30%); }
+.marker-alto-activa, .marker-alto-programada { background: #dc2626; }
+.marker-medio-activa, .marker-medio-programada { background: #eab308; }
+.marker-bajo-activa, .marker-bajo-programada { background: #2563eb; }
+.marker-resuelta { background: #64748b; }
+.marker-cancelada { background: #94a3b8; }
