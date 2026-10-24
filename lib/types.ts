@@ -67,6 +67,13 @@ export interface CambioHistorial {
   esDatoSimulado: true
 }
 
+export interface UsuarioDemo {
+  id: string
+  nombre: string
+  rol: string
+  esDatoSimulado: true
+}
+
 export interface SugerenciaIA {
   id: string
   afectacionId?: string

@@ -3,9 +3,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { afectacionesIniciales, notificacionesIniciales, preferenciasIniciales, sugerenciasIniciales } from './mock-data'
-import type { Afectacion, CambioHistorial, Notificacion, Preferencias, SugerenciaIA } from './types'
+import type { Afectacion, CambioHistorial, Notificacion, Preferencias, SugerenciaIA, UsuarioDemo } from './types'
 
 type DemoStore = {
+  usuarioActual: UsuarioDemo | null
+  setUsuarioActual: (usuario: UsuarioDemo | null) => void
   afectaciones: Afectacion[]
   notificaciones: Notificacion[]
   preferencias: Preferencias
@@ -20,6 +22,8 @@ type DemoStore = {
 }
 
 export const useDemoStore = create<DemoStore>()(persist((set) => ({
+  usuarioActual: null,
+  setUsuarioActual: (usuarioActual) => set({ usuarioActual }),
   afectaciones: afectacionesIniciales,
   notificaciones: notificacionesIniciales,
   preferencias: preferenciasIniciales,
