@@ -1,5 +1,5 @@
-import { PaginaPendiente } from '../_componentes/pagina-pendiente'
+import { Laboratorio } from '../_componentes/laboratorio/laboratorio'
 
-export default function LaboratorioPage() {
-  return <PaginaPendiente titulo="Laboratorio de análisis" />
+export default function PaginaLaboratorio() {
+  return <Laboratorio />
 }

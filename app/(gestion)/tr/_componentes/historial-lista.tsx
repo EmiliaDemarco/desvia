@@ -13,6 +13,7 @@ const ETIQUETA_ENTIDAD: Record<CambioHistorial['entidad'], string> = {
   afectacion: 'Afectación',
   notificacion: 'Notificación',
   preferencias: 'Preferencias',
+  sugerencia: 'Sugerencia IA',
 }
 
 export function HistorialLista({ cambios, titulos, vacio = 'Todavía no hay cambios registrados.' }: HistorialListaProps) {

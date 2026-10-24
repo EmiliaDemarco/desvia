@@ -1,5 +1,5 @@
-import { PaginaPendiente } from '../_componentes/pagina-pendiente'
+import { SugerenciasLista } from '../_componentes/sugerencias-lista'
 
-export default function SugerenciasPage() {
-  return <PaginaPendiente titulo="Sugerencias IA" />
+export default function PaginaSugerencias() {
+  return <SugerenciasLista />
 }

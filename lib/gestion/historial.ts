@@ -48,6 +48,30 @@ function registro(afectacion: Afectacion, usuario: string, fecha: string, accion
   }
 }
 
+export function registroDeSugerencia(
+  sugerenciaId: string,
+  usuario: string,
+  fecha: string,
+  accion: string,
+  campo: string,
+  anterior: string,
+  nuevo: string,
+): CambioHistorial {
+  return {
+    id: nuevoId(),
+    entidad: 'sugerencia',
+    entidadId: sugerenciaId,
+    accion,
+    fecha,
+    usuario,
+    campo,
+    valorAnterior: anterior,
+    valorNuevo: nuevo,
+    detalle: `${campo}: ${anterior} → ${nuevo}`,
+    esDatoSimulado: true,
+  }
+}
+
 export function registrosDeCreacion(afectacion: Afectacion, usuario: string, fecha: string): CambioHistorial[] {
   const registros = [registro(afectacion, usuario, fecha, 'Creación', 'Afectación', VACIO, afectacion.titulo)]
   if (afectacion.publicacion !== 'borrador') {

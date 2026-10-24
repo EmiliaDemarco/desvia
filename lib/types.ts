@@ -72,7 +72,7 @@ export interface Preferencias {
 
 export interface CambioHistorial {
   id: string
-  entidad: 'afectacion' | 'notificacion' | 'preferencias'
+  entidad: 'afectacion' | 'notificacion' | 'preferencias' | 'sugerencia'
   entidadId: string
   accion: string
   fecha: string
@@ -94,6 +94,16 @@ export interface UsuarioDemo {
 export interface SugerenciaIA {
   id: string
   afectacionId?: string
+  /** Sugerencias generadas por el análisis de cámara: proponen crear una afectación. */
+  origen?: string
+  titulo?: string
+  tipo?: TipoAfectacion
+  direccion?: string
+  latitud?: number
+  longitud?: number
+  /** Confianza estimada entre 0 y 1. */
+  confianza?: number
+  afectacionCreadaId?: string
   texto: string
   estado: 'pendiente' | 'aceptada' | 'descartada'
   creadaEn: string
