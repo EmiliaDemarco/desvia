@@ -1,0 +1,63 @@
+.portada {
+  --p-navy: #0b2a55;
+  --p-azul: #1551a1;
+  --p-naranja: #f26b1d;
+  --p-cielo: #e8f0fa;
+  --p-tinta: #0f1b2d;
+  font-family: var(--fuente-cuerpo), system-ui, sans-serif;
+  color: var(--p-tinta);
+  background: #ffffff;
+}
+
+.portada .titular {
+  font-family: var(--fuente-titular), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+@keyframes portada-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes portada-pulso {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.portada .entra {
+  animation-name: portada-entrada;
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+.portada .pulso::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--p-naranja);
+  animation: portada-pulso 2s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portada .entra {
+    animation: none;
+  }
+  .portada .pulso::before {
+    animation: none;
+    opacity: 0;
+  }
+}
