@@ -4,9 +4,9 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useMemo, useState } from 'react'
-import { Bell, Crosshair, Settings, X } from 'lucide-react'
+import { Crosshair, X } from 'lucide-react'
 import { afectacionEnZonas, distanciaHaversineM, RADIO_ANTICIPACION_POR_DEFECTO_M } from '@/lib/alerts/engine'
-import { RUTA_PELLEGRINI } from '@/lib/alerts/simulacion'
+import { RUTA_JUAN } from '@/lib/alerts/simulacion'
 import { ETIQUETA_TIPO, formatearFechaHora, TIPOS_AFECTACION } from '@/lib/formato'
 import { useDemoStore } from '@/lib/store'
 import type { Afectacion, Estado, TipoAfectacion } from '@/lib/types'
@@ -35,7 +35,6 @@ function DesviaContenido() {
   const hidratado = useHidratado()
   const afectaciones = useDemoStore((estado) => estado.afectaciones)
   const preferencias = useDemoStore((estado) => estado.preferencias)
-  const sinLeer = useDemoStore((estado) => estado.notificaciones.filter((n) => !n.leida).length)
   const [tipo, setTipo] = useState<TipoAfectacion | 'todas'>('todas')
   const [estado, setEstado] = useState<Estado | 'todos'>('todos')
   const [aplicarPreferencias, setAplicarPreferencias] = useState(true)
@@ -124,26 +123,9 @@ function DesviaContenido() {
           <AlertaBanner alerta={simulacion.alerta} onVerEnMapa={() => verEnMapa(simulacion.alerta!.principal.afectacion)} onCerrar={simulacion.descartarAlerta} />
         )}
       </div>
-      <div className="flex items-center justify-between gap-2 bg-slate-100 px-5 py-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-700">DATOS SIMULADOS</p>
-          <h1 className="text-2xl font-black text-[#1551A1]">desv<span className="text-[#F26B1D]">IA</span></h1>
-        </div>
-        <div className="flex items-center gap-1">
-          <Link
-            href="/movil/desvia/notificaciones"
-            aria-label={hidratado && sinLeer > 0 ? `Notificaciones, ${sinLeer} sin leer` : 'Notificaciones'}
-            className="relative grid size-11 place-items-center rounded-full text-[#1551A1]"
-          >
-            <Bell size={22} />
-            {hidratado && sinLeer > 0 && (
-              <span className="absolute right-0.5 top-0.5 grid min-w-5 place-items-center rounded-full bg-[#F26B1D] px-1 text-[11px] font-black leading-5 text-white">{sinLeer}</span>
-            )}
-          </Link>
-          <Link href="/movil/desvia/preferencias" aria-label="Preferencias de avisos" className="grid size-11 place-items-center rounded-full text-[#1551A1]">
-            <Settings size={22} />
-          </Link>
-        </div>
+      <div className="bg-slate-100 px-5 py-3">
+        <p className="text-xs font-bold uppercase tracking-wider text-amber-700">DATOS SIMULADOS</p>
+        <h1 className="text-2xl font-black text-[#1551A1]">desv<span className="text-[#F26B1D]">IA</span></h1>
       </div>
       <div className="space-y-3 border-b bg-white px-4 py-3">
         <button onClick={pedirUbicacion} className="flex items-center gap-2 rounded-full bg-[#1551A1] px-4 py-2 text-xs font-bold text-white"><Crosshair size={15} /> Usar mi ubicación</button>
@@ -179,7 +161,7 @@ function DesviaContenido() {
           seleccionada={seleccionada}
           onSeleccionar={setSeleccionada}
           ubicacion={ubicacion}
-          ruta={simulacion.estado === 'inactiva' ? undefined : RUTA_PELLEGRINI}
+          ruta={simulacion.estado === 'inactiva' ? undefined : RUTA_JUAN}
           juan={simulacion.juan}
           radioM={radioM}
           reinicioId={simulacion.reinicioId}

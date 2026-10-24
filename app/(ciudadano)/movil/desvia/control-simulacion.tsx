@@ -13,9 +13,9 @@ interface Props {
 
 const etiquetaEstado: Record<EstadoSimulacion, string> = {
   inactiva: '',
-  corriendo: 'Juan avanza por Av. Pellegrini',
+  corriendo: 'Juan va del Monumento a Córdoba y Oroño',
   pausada: 'Recorrido en pausa',
-  finalizada: 'Juan llegó al Parque Independencia',
+  finalizada: 'Juan llegó a Córdoba y Bv. Oroño',
 }
 
 export function ControlSimulacion({ estado, paso, totalPasos, onIniciar, onAlternarPausa }: Props) {

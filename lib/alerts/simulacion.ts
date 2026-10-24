@@ -5,27 +5,28 @@ export const INTERVALO_PASO_MS = 400
 export const PASOS_POR_TRAMO = 4
 export const MS_SIMULADOS_POR_PASO = 30_000
 
-// Trazado esquemático por Av. Pellegrini, de Av. Francia hacia el Parque Independencia. DATO SIMULADO.
-export const RUTA_PELLEGRINI: Array<[number, number]> = [
-  [-32.9512, -60.669],
-  [-32.9519, -60.6678],
-  [-32.9526, -60.6666],
-  [-32.9533, -60.6654],
-  [-32.954, -60.6642],
-  [-32.9547, -60.663],
-  [-32.9553, -60.662],
-  [-32.956, -60.6611],
-  [-32.9566, -60.6603],
-  [-32.9572, -60.6596],
+// Trazado esquemático desde el Monumento a la Bandera hasta Córdoba y Bv. Oroño, por calle Córdoba. DATO SIMULADO.
+export const RUTA_JUAN: Array<[number, number]> = [
+  [-32.9477, -60.6304],
+  [-32.9474, -60.6325],
+  [-32.9471, -60.6347],
+  [-32.9467, -60.637],
+  [-32.9463, -60.639],
+  [-32.9465, -60.6412],
+  [-32.9468, -60.6439],
+  [-32.9471, -60.6467],
+  [-32.9475, -60.649],
+  [-32.9479, -60.6511],
+  [-32.9485, -60.6532],
 ]
 
-export const TOTAL_PASOS = (RUTA_PELLEGRINI.length - 1) * PASOS_POR_TRAMO
+export const TOTAL_PASOS = (RUTA_JUAN.length - 1) * PASOS_POR_TRAMO
 
 export function posicionEnPaso(paso: number): Coordenada {
   const avance = Math.min(Math.max(paso, 0), TOTAL_PASOS) / PASOS_POR_TRAMO
-  const tramo = Math.min(Math.floor(avance), RUTA_PELLEGRINI.length - 2)
+  const tramo = Math.min(Math.floor(avance), RUTA_JUAN.length - 2)
   const fraccion = avance - tramo
-  const [latA, lonA] = RUTA_PELLEGRINI[tramo]
-  const [latB, lonB] = RUTA_PELLEGRINI[tramo + 1]
+  const [latA, lonA] = RUTA_JUAN[tramo]
+  const [latB, lonB] = RUTA_JUAN[tramo + 1]
   return { latitud: latA + (latB - latA) * fraccion, longitud: lonA + (lonB - lonA) * fraccion }
 }

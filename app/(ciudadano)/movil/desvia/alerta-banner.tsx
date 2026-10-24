@@ -30,7 +30,7 @@ export function AlertaBanner({ alerta, onVerEnMapa, onCerrar }: { alerta: Alerta
           <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
             DATO SIMULADO{motivo === 'actualizacion' ? ' · Actualización' : ''}
           </p>
-          <h2 className="text-balance text-sm font-bold leading-snug text-slate-900">Tránsito congestionado cerca del Parque Independencia</h2>
+          <h2 className="text-balance text-sm font-bold leading-snug text-slate-900">{afectacion.titulo}</h2>
           <p className="mt-1 text-pretty text-xs leading-relaxed text-slate-600">
             Estás próximo a una zona con afectaciones. Consultá el mapa para conocer los detalles y evaluar tu recorrido.
           </p>
