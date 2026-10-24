@@ -2,6 +2,8 @@ export type TipoAfectacion = 'obra' | 'corte' | 'poda' | 'accidente' | 'congesti
 export type Estado = 'programada' | 'activa' | 'resuelta' | 'cancelada'
 export type Impacto = 'bajo' | 'medio' | 'alto'
 export type Confiabilidad = 'confirmada' | 'estimada'
+export type Publicacion = 'borrador' | 'programada' | 'publicada'
+export type TipoCorte = 'parcial' | 'total'
 
 export interface Afectacion {
   id: string
@@ -9,18 +11,29 @@ export interface Afectacion {
   descripcion: string
   tipo: TipoAfectacion
   estado: Estado
+  publicacion: Publicacion
   impacto: Impacto
   fuente: string
   confiabilidad: Confiabilidad
   direccion: string
+  calle?: string
+  altura?: string
+  interseccion?: string
   zona: string
   latitud: number
   longitud: number
   inicio: string
   fin?: string
+  tipoCorte?: TipoCorte
+  sentidoAfectado?: string
+  /** Solo para el panel de gestión. Nunca se muestra en la experiencia ciudadana. */
+  observacionesInternas?: string
   actualizadaEn: string
   esDatoSimulado: true
 }
+
+/** Lo que ve la ciudadanía: la afectación sin ningún campo interno. */
+export type AfectacionCiudadana = Omit<Afectacion, 'observacionesInternas'>
 
 export interface Notificacion {
   id: string
@@ -63,6 +76,10 @@ export interface CambioHistorial {
   entidadId: string
   accion: string
   fecha: string
+  usuario: string
+  campo?: string
+  valorAnterior?: string
+  valorNuevo?: string
   detalle: string
   esDatoSimulado: true
 }

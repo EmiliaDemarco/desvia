@@ -12,7 +12,7 @@ const Mapa = dynamic(() => import('@/app/(ciudadano)/movil/desvia/mapa'), {
 const COLOR_IMPACTO: Record<Impacto, string> = { alto: '#dc2626', medio: '#eab308', bajo: '#2563eb' }
 
 export function MapaActivas({ afectaciones }: { afectaciones: Afectacion[] }) {
-  const activas = useMemo(() => afectaciones.filter((a) => a.estado === 'activa'), [afectaciones])
+  const activas = useMemo(() => afectaciones.filter((a) => a.estado === 'activa' && a.publicacion !== 'borrador'), [afectaciones])
   const [seleccionadaId, setSeleccionadaId] = useState<string | null>(null)
   const seleccionada = activas.find((a) => a.id === seleccionadaId)
   const seleccionar = useCallback((a: Afectacion) => setSeleccionadaId(a.id), [])

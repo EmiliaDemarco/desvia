@@ -6,8 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Crosshair, X } from 'lucide-react'
 import { afectacionEnZonas, distanciaHaversineM, RADIO_ANTICIPACION_POR_DEFECTO_M } from '@/lib/alerts/engine'
-import { RUTA_JUAN } from '@/lib/alerts/simulacion'
+import { AHORA_SIMULADO, RUTA_JUAN } from '@/lib/alerts/simulacion'
 import { ETIQUETA_TIPO, formatearFechaHora, TIPOS_AFECTACION } from '@/lib/formato'
+import { afectacionesParaCiudadano } from '@/lib/gestion/visibilidad'
 import { useDemoStore } from '@/lib/store'
 import type { Afectacion, Estado, TipoAfectacion } from '@/lib/types'
 import { useHidratado } from '@/lib/use-hidratado'
@@ -33,7 +34,9 @@ function DesviaContenido() {
   const router = useRouter()
   const idEnfocado = useSearchParams().get('afectacion')
   const hidratado = useHidratado()
-  const afectaciones = useDemoStore((estado) => estado.afectaciones)
+  const registradas = useDemoStore((estado) => estado.afectaciones)
+  // Única entrada de datos de esta pantalla: sin borradores ni observaciones internas.
+  const afectaciones = useMemo(() => afectacionesParaCiudadano(registradas, AHORA_SIMULADO), [registradas])
   const preferencias = useDemoStore((estado) => estado.preferencias)
   const [tipo, setTipo] = useState<TipoAfectacion | 'todas'>('todas')
   const [estado, setEstado] = useState<Estado | 'todos'>('todos')
@@ -68,7 +71,7 @@ function DesviaContenido() {
 
   useEffect(() => {
     if (!idEnfocado) return
-    const afectacion = useDemoStore.getState().afectaciones.find((a) => a.id === idEnfocado)
+    const afectacion = afectacionesParaCiudadano(useDemoStore.getState().afectaciones, AHORA_SIMULADO).find((a) => a.id === idEnfocado)
     if (afectacion) {
       setTipo('todas')
       setEstado('todos')

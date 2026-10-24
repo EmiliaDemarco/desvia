@@ -1,5 +1,5 @@
-import { PaginaPendiente } from '../_componentes/pagina-pendiente'
+import { TablaAfectaciones } from '../_componentes/tabla-afectaciones'
 
 export default function AfectacionesPage() {
-  return <PaginaPendiente titulo="Afectaciones" />
+  return <TablaAfectaciones />
 }

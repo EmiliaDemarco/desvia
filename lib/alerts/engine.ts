@@ -1,3 +1,4 @@
+import { esVisibleParaCiudadano } from '../gestion/visibilidad'
 import type { Afectacion, ModosAviso, Preferencias, ZonaHabitual } from '../types'
 
 export interface Coordenada {
@@ -73,6 +74,7 @@ export function evaluarAlertas(
 
   const alertas: AlertaEvaluada[] = []
   for (const afectacion of afectaciones) {
+    if (!esVisibleParaCiudadano(afectacion, ahora)) continue
     if (!preferencias.tiposSeguidos.includes(afectacion.tipo)) continue
     if (!estaVigente(afectacion, ahora)) continue
     if (preferencias.soloAltoImpacto && afectacion.impacto !== 'alto') continue

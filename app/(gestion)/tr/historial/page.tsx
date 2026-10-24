@@ -1,5 +1,5 @@
-import { PaginaPendiente } from '../_componentes/pagina-pendiente'
+import { HistorialGlobal } from '../_componentes/historial-global'
 
 export default function HistorialPage() {
-  return <PaginaPendiente titulo="Historial" />
+  return <HistorialGlobal />
 }

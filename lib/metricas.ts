@@ -31,7 +31,9 @@ export interface Metricas {
   porDia: Array<{ dia: string; afectaciones: number; alertas: number }>
 }
 
-export function calcularMetricas(afectaciones: Afectacion[], notificaciones: Notificacion[], ahora: Date): Metricas {
+export function calcularMetricas(registradas: Afectacion[], notificaciones: Notificacion[], ahora: Date): Metricas {
+  // Un borrador todavía no está en vigencia: no suma a los indicadores.
+  const afectaciones = registradas.filter((a) => a.publicacion !== 'borrador')
   const activas = afectaciones.filter((a) => a.estado === 'activa')
   const programadas = afectaciones.filter((a) => a.estado === 'programada')
   const proximasAFinalizar = activas.filter((a) => {
