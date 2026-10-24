@@ -13,7 +13,7 @@ export default function Home() {
           <Link href="/movil/desvia" className="rounded-xl border border-border bg-card p-6 text-left shadow-sm transition hover:border-[#F26B1D]">
             <span className="text-sm font-semibold text-muted-foreground">Acceso ciudadano</span>
             <h1 className="mt-2 text-xl font-bold text-foreground">Experiencia ciudadana</h1>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">TR-Móvil + desvIA para consultar afectaciones de la ciudad.</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Movil-TR + desvIA para consultar afectaciones de la ciudad.</p>
           </Link>
           <Link href="/tr" className="rounded-xl border border-border bg-card p-6 text-left shadow-sm transition hover:border-[#F26B1D]">
             <span className="text-sm font-semibold text-muted-foreground">Acceso gestión</span>

@@ -49,7 +49,7 @@ export function ShellMovil({ children }: { children: ReactNode }) {
   }, [abierto])
 
   const cantidad = hidratado ? sinLeer : 0
-  const avisarFueraDeMaqueta = (nombre: string) => setAviso(`"${nombre}" es un módulo de TR-Móvil que no está incluido en esta maqueta.`)
+  const avisarFueraDeMaqueta = (nombre: string) => setAviso(`"${nombre}" es un módulo de Movil-TR que no está incluido en esta maqueta.`)
 
   return (
     <div className="mobile-shell">
@@ -57,7 +57,7 @@ export function ShellMovil({ children }: { children: ReactNode }) {
         <button type="button" onClick={() => setAbierto(true)} aria-label="Abrir menú" aria-expanded={abierto} aria-controls="menu-lateral" className="grid size-11 place-items-center rounded-full">
           <Menu />
         </button>
-        <strong className="text-center text-xl">TR-Móvil</strong>
+        <strong className="text-center text-xl">Movil-TR</strong>
         <Link
           href="/movil/desvia/notificaciones"
           aria-label={cantidad > 0 ? `Notificaciones, ${cantidad} sin leer` : 'Notificaciones'}
@@ -70,12 +70,12 @@ export function ShellMovil({ children }: { children: ReactNode }) {
         </Link>
       </header>
       <main className="relative min-h-0 flex-1 overflow-y-auto bg-white">{children}</main>
-      <p className="shrink-0 bg-white px-4 py-2 text-center text-[10px] text-slate-500">Maqueta adaptable. No reproduce la interfaz real de TR-Móvil.</p>
+      <p className="shrink-0 bg-white px-4 py-2 text-center text-[10px] text-slate-500">Maqueta adaptable. No reproduce la interfaz real de Movil-TR.</p>
 
       {abierto && (
         <div className="absolute inset-0 z-[2000]">
           <button type="button" aria-label="Cerrar menú" tabIndex={-1} onClick={() => setAbierto(false)} className="absolute inset-0 bg-black/50" />
-          <nav id="menu-lateral" aria-label="Menú de TR-Móvil" className="drawer-panel absolute inset-y-0 left-0 flex w-[78%] max-w-[320px] flex-col overflow-y-auto bg-white shadow-2xl">
+          <nav id="menu-lateral" aria-label="Menú de Movil-TR" className="drawer-panel absolute inset-y-0 left-0 flex w-[78%] max-w-[320px] flex-col overflow-y-auto bg-white shadow-2xl">
             <div className="flex items-start justify-between px-4 pt-4">
               <span className="w-11" aria-hidden="true" />
               <span className="grid size-16 place-items-center rounded-full bg-[#1551A1] text-white" aria-hidden="true">

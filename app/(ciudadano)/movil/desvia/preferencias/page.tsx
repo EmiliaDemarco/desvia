@@ -38,14 +38,14 @@ const modos: Array<{ clave: keyof ModosAviso; titulo: string; descripcion: strin
     clave: 'zonasHabituales',
     titulo: 'Por zonas habituales',
     descripcion: 'Recibís avisos aunque la app esté cerrada, sin compartir tu ubicación. Solo te avisamos de las zonas que elegiste.',
-    requisito: 'Requiere integración con las notificaciones de TR-Móvil',
+    requisito: 'Requiere integración con las notificaciones de Movil-TR',
     enDemo: 'Avisa de las afectaciones dentro de tus zonas habituales, sin usar la posición.',
   },
   {
     clave: 'alAcercarme',
     titulo: 'Al acercarme a una afectación',
     descripcion: 'Usa tu ubicación en segundo plano para avisarte cuando te acercás a una afectación. Es opcional.',
-    requisito: "Propuesta. Requiere permiso de ubicación 'siempre' e integración con TR-Móvil",
+    requisito: "Propuesta. Requiere permiso de ubicación 'siempre' e integración con Movil-TR",
     enDemo: 'Avisa al acercarte a una afectación, usando la posición simulada de Juan.',
   },
 ]

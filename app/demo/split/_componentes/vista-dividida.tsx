@@ -75,7 +75,7 @@ export function VistaDividida() {
           className={`${vista === 'celular' ? 'flex' : 'hidden'} min-h-0 min-w-0 flex-1 flex-col items-center gap-2 lg:w-[410px] lg:flex-none lg:shrink-0 lg:flex`}
         >
           <h2 className="hidden shrink-0 text-sm font-bold lg:block">
-            Ciudadano <span className="font-medium text-[#4b5870]">· TR-Móvil + desvIA</span>
+            Ciudadano <span className="font-medium text-[#4b5870]">· Movil-TR + desvIA</span>
           </h2>
           <MarcoCelular />
         </section>
