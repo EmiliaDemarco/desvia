@@ -44,6 +44,17 @@ export const valoresVacios: ValoresFormulario = {
   publicacion: 'borrador',
 }
 
+const UN_DIA_MS = 24 * 60 * 60 * 1000
+
+// La demo corre con un reloj fijo: precargar fechas en ese reloj evita que un alta "de ahora" quede como programada e invisible.
+export function valoresParaAltaNueva(ahora: Date): ValoresFormulario {
+  return {
+    ...valoresVacios,
+    inicio: aValorInputFechaHora(ahora.toISOString()),
+    fin: aValorInputFechaHora(new Date(ahora.getTime() + UN_DIA_MS).toISOString()),
+  }
+}
+
 export function valoresDesdeAfectacion(a: Afectacion): ValoresFormulario {
   return {
     titulo: a.titulo,

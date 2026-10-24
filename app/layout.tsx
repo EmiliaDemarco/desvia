@@ -4,33 +4,14 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'desvIA · La ciudad te avisa antes.',
-  description: 'Maqueta simulada de información urbana para Rosario.',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  description:
+    'Prototipo de información urbana para Rosario: obras y cortes en el mapa, avisos anticipados según tu recorrido y un panel municipal de gestión. Datos simulados.',
+  applicationName: 'desvIA',
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
-  ],
+  colorScheme: 'light',
+  themeColor: '#0B1F3A',
 }
 
 export default function RootLayout({

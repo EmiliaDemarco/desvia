@@ -14,14 +14,16 @@ import {
   PUBLICACIONES,
   TIPOS_AFECTACION,
   TIPOS_CORTE,
+  formatearFechaHora,
 } from '@/lib/formato'
 import {
   coordenadaValida,
   valoresDesdeAfectacion,
-  valoresVacios,
+  valoresParaAltaNueva,
   type ErroresFormulario,
   type ValoresFormulario,
 } from '@/lib/gestion/formulario'
+import { AHORA_SIMULADO } from '@/lib/alerts/simulacion'
 import { crearAfectacion, editarAfectacion } from '@/lib/services/afectaciones'
 import { useDemoStore } from '@/lib/store'
 import type { Afectacion, Impacto, Publicacion, TipoAfectacion, TipoCorte } from '@/lib/types'
@@ -57,7 +59,9 @@ interface FormularioInternoProps {
 function FormularioInterno({ existente }: FormularioInternoProps) {
   const router = useRouter()
   const resumenRef = useRef<HTMLDivElement>(null)
-  const [valores, setValores] = useState<ValoresFormulario>(() => (existente ? valoresDesdeAfectacion(existente) : valoresVacios))
+  const [valores, setValores] = useState<ValoresFormulario>(() =>
+    existente ? valoresDesdeAfectacion(existente) : valoresParaAltaNueva(AHORA_SIMULADO),
+  )
   const [errores, setErrores] = useState<ErroresFormulario>({})
   const [guardando, setGuardando] = useState(false)
 
@@ -216,7 +220,12 @@ function FormularioInterno({ existente }: FormularioInternoProps) {
 
       <Seccion titulo="Fechas y tipo de corte">
         <div className="grid gap-4 sm:grid-cols-2">
-          <Campo etiqueta="Inicio" obligatorio error={errores.inicio}>
+          <Campo
+            etiqueta="Inicio"
+            obligatorio
+            error={errores.inicio}
+            ayuda={`La demo usa un reloj fijo: ahora es el ${formatearFechaHora(AHORA_SIMULADO.toISOString())}. Un inicio posterior la deja programada.`}
+          >
             {(control) => <input {...control} type="datetime-local" value={valores.inicio} onChange={(e) => cambiar('inicio', e.target.value)} className={CLASE_CAMPO} />}
           </Campo>
           <Campo etiqueta="Fin estimado" error={errores.fin} ayuda="Opcional. Debe ser posterior al inicio.">
