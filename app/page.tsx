@@ -21,9 +21,17 @@ export default function Home() {
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Espacio de gestión y revisión de información simulada.</p>
           </Link>
         </div>
-        <Link href="/demo/split" className="inline-block rounded-xl border border-dashed border-[#F26B1D] px-5 py-3 text-sm font-bold text-foreground transition hover:bg-amber-50">
-          Ver los dos lados en vivo (panel + celular)
-        </Link>
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link href="/demo" className="inline-block rounded-xl bg-[#1551A1] px-5 py-3 text-sm font-bold text-[#ffffff] transition hover:bg-[#0f3d7a]">
+            Guía de la demostración
+          </Link>
+          <Link href="/demo/split" className="inline-block rounded-xl border border-dashed border-[#F26B1D] px-5 py-3 text-sm font-bold text-foreground transition hover:bg-amber-50">
+            Ver los dos lados en vivo (panel + celular)
+          </Link>
+          <Link href="/evolucion" className="inline-block rounded-xl border border-border px-5 py-3 text-sm font-bold text-foreground transition hover:bg-secondary">
+            Evolución con IA
+          </Link>
+        </div>
       </section>
     </main>
   )

@@ -13,6 +13,7 @@ const ITEMS_DESVIA = [
   { href: '/movil/desvia', texto: 'Mapa de afectaciones' },
   { href: '/movil/desvia/notificaciones', texto: 'Notificaciones' },
   { href: '/movil/desvia/preferencias', texto: 'Preferencias de avisos' },
+  { href: '/evolucion', texto: 'Evolución con IA' },
 ]
 
 const claseItem = 'flex min-h-12 w-full items-center justify-between px-6 text-left text-lg font-semibold text-slate-800 active:bg-slate-100'

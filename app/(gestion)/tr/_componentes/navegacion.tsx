@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { FlaskConical, History, LayoutDashboard, LogOut, Sparkles, TriangleAlert, type LucideIcon } from 'lucide-react'
+import { FlaskConical, History, LayoutDashboard, ListChecks, LogOut, Route, Sparkles, TriangleAlert, type LucideIcon } from 'lucide-react'
 import { useDemoStore } from '@/lib/store'
 import type { UsuarioDemo } from '@/lib/types'
 
@@ -12,6 +12,8 @@ const SECCIONES: Array<{ href: string; etiqueta: string; Icono: LucideIcon }> = 
   { href: '/tr/sugerencias', etiqueta: 'Sugerencias IA', Icono: Sparkles },
   { href: '/tr/laboratorio', etiqueta: 'Laboratorio de análisis', Icono: FlaskConical },
   { href: '/tr/historial', etiqueta: 'Historial', Icono: History },
+  { href: '/evolucion', etiqueta: 'Evolución con IA', Icono: Route },
+  { href: '/demo', etiqueta: 'Guía de la demo', Icono: ListChecks },
 ]
 
 interface MenuTrProps {
