@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
-import { MapPin, Trash2 } from 'lucide-react'
+import { Check, MapPin, Pencil, Trash2, X } from 'lucide-react'
 import { preferenciasIniciales, zonasPredefinidas } from '@/lib/mock-data'
 import { ETIQUETA_TIPO, TIPOS_AFECTACION } from '@/lib/formato'
 import { actualizarPreferencias } from '@/lib/services/preferencias'
@@ -16,6 +16,7 @@ const MapaZonas = dynamic(() => import('./mapa-zonas'), { ssr: false, loading: (
 
 const MAX_ZONAS = 3
 const RADIO_ZONA_M = 500
+const MAX_LARGO_NOMBRE = 30
 
 const descripcionTipo: Record<TipoAfectacion, string> = {
   obra: 'Obras y trabajos en la vía pública',
@@ -26,26 +27,26 @@ const descripcionTipo: Record<TipoAfectacion, string> = {
   evento: 'Eventos y actividades públicas',
 }
 
-const modos: Array<{ clave: keyof ModosAviso; titulo: string; descripcion: string; requisito?: string; activoEnDemo: boolean }> = [
+const modos: Array<{ clave: keyof ModosAviso; titulo: string; descripcion: string; requisito?: string; enDemo: string }> = [
   {
     clave: 'appAbierta',
     titulo: 'Con la app abierta',
     descripcion: 'Te avisamos usando tu ubicación mientras usás la app.',
-    activoEnDemo: true,
+    enDemo: 'Avisa cuando la posición simulada de Juan entra en tu distancia de anticipación.',
   },
   {
     clave: 'zonasHabituales',
     titulo: 'Por zonas habituales',
     descripcion: 'Recibís avisos aunque la app esté cerrada, sin compartir tu ubicación. Solo te avisamos de las zonas que elegiste.',
     requisito: 'Requiere integración con las notificaciones de TR-Móvil',
-    activoEnDemo: false,
+    enDemo: 'Avisa de las afectaciones dentro de tus zonas habituales, sin usar la posición.',
   },
   {
     clave: 'alAcercarme',
     titulo: 'Al acercarme a una afectación',
     descripcion: 'Usa tu ubicación en segundo plano para avisarte cuando te acercás a una afectación. Es opcional.',
     requisito: "Propuesta. Requiere permiso de ubicación 'siempre' e integración con TR-Móvil",
-    activoEnDemo: false,
+    enDemo: 'Avisa al acercarte a una afectación, usando la posición simulada de Juan.',
   },
 ]
 
@@ -54,6 +55,8 @@ export default function PreferenciasPage() {
   const preferencias = useDemoStore((estado) => estado.preferencias)
   const [punto, setPunto] = useState<[number, number] | null>(null)
   const [aviso, setAviso] = useState('')
+  const [editandoId, setEditandoId] = useState<string | null>(null)
+  const [nombreEditado, setNombreEditado] = useState('')
 
   const cambiar = (cambios: Partial<Preferencias>) => void actualizarPreferencias(cambios)
   const zonas = preferencias.zonasHabituales
@@ -72,7 +75,22 @@ export default function PreferenciasPage() {
 
   const quitarZona = (id: string) => {
     setAviso('')
+    if (editandoId === id) setEditandoId(null)
     cambiar({ zonasHabituales: zonas.filter((z) => z.id !== id) })
+  }
+
+  const empezarEdicion = (zona: ZonaHabitual) => {
+    setAviso('')
+    setEditandoId(zona.id)
+    setNombreEditado(zona.nombre)
+  }
+
+  const guardarNombre = (id: string) => {
+    const nombre = nombreEditado.trim()
+    if (!nombre) return setAviso('El nombre de la zona no puede quedar vacío.')
+    setAviso('')
+    cambiar({ zonasHabituales: zonas.map((z) => (z.id === id ? { ...z, nombre } : z)) })
+    setEditandoId(null)
   }
 
   const elegirPunto = (nuevo: [number, number]) => {
@@ -151,9 +169,37 @@ export default function PreferenciasPage() {
             {zonas.length > 0 ? (
               <ul className="mt-3 space-y-2">
                 {zonas.map((zona) => (
-                  <li key={zona.id} className="flex items-center justify-between gap-2 rounded-xl bg-blue-50 py-2 pl-3 pr-1">
-                    <span className="flex items-center gap-2 text-sm font-semibold text-[#1551A1]"><MapPin size={16} aria-hidden="true" />{zona.nombre}</span>
-                    <button onClick={() => quitarZona(zona.id)} aria-label={`Quitar zona ${zona.nombre}`} className="grid size-10 place-items-center text-slate-500"><Trash2 size={18} /></button>
+                  <li key={zona.id} className="rounded-xl bg-blue-50 py-2 pl-3 pr-1">
+                    {editandoId === zona.id ? (
+                      <form
+                        onSubmit={(evento) => {
+                          evento.preventDefault()
+                          guardarNombre(zona.id)
+                        }}
+                        className="flex items-center gap-1"
+                      >
+                        <label className="sr-only" htmlFor={`nombre-${zona.id}`}>Nombre de la zona</label>
+                        <input
+                          id={`nombre-${zona.id}`}
+                          value={nombreEditado}
+                          onChange={(evento) => setNombreEditado(evento.target.value)}
+                          onKeyDown={(evento) => evento.key === 'Escape' && setEditandoId(null)}
+                          maxLength={MAX_LARGO_NOMBRE}
+                          autoFocus
+                          className="h-10 min-w-0 flex-1 rounded-lg border border-[#1551A1] bg-white px-3 text-sm font-semibold text-slate-900 outline-none"
+                        />
+                        <button type="submit" aria-label="Guardar nombre" className="grid size-10 shrink-0 place-items-center text-green-700"><Check size={20} /></button>
+                        <button type="button" onClick={() => setEditandoId(null)} aria-label="Cancelar edición" className="grid size-10 shrink-0 place-items-center text-slate-500"><X size={20} /></button>
+                      </form>
+                    ) : (
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-[#1551A1]"><MapPin size={16} className="shrink-0" aria-hidden="true" /><span className="truncate">{zona.nombre}</span></span>
+                        <span className="flex shrink-0">
+                          <button onClick={() => empezarEdicion(zona)} aria-label={`Editar nombre de la zona ${zona.nombre}`} className="grid size-10 place-items-center text-slate-500"><Pencil size={18} /></button>
+                          <button onClick={() => quitarZona(zona.id)} aria-label={`Quitar zona ${zona.nombre}`} className="grid size-10 place-items-center text-slate-500"><Trash2 size={18} /></button>
+                        </span>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -190,7 +236,7 @@ export default function PreferenciasPage() {
 
           <section className="px-5 py-5">
             <h2 className="text-base font-bold text-slate-900">Cómo recibir avisos</h2>
-            <p className="mt-1 text-sm text-slate-500">Podés combinar las opciones. En esta demo solo funciona la primera.</p>
+            <p className="mt-1 text-sm text-slate-500">Podés combinar las opciones. En esta demo las tres se simulan en el navegador, sin notificaciones ni ubicación reales.</p>
             <ul className="mt-3 space-y-3">
               {modos.map((modo) => {
                 const activo = preferencias.modosAviso[modo.clave]
@@ -205,16 +251,11 @@ export default function PreferenciasPage() {
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {modo.requisito && <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-800">{modo.requisito}</span>}
-                      {modo.activoEnDemo ? (
-                        <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${activo ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'}`}>
-                          {activo ? 'Activo en la demo' : 'Desactivado: no vas a recibir alertas en la demo'}
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-600">
-                          {activo ? 'Preferencia guardada · No activo en la demo' : 'No activo en la demo'}
-                        </span>
-                      )}
+                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${activo ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'}`}>
+                        {activo ? 'Simulado en la demo' : 'Desactivado'}
+                      </span>
                     </div>
+                    {activo && <p className="mt-2 text-xs leading-snug text-slate-500">{modo.enDemo}</p>}
                   </li>
                 )
               })}

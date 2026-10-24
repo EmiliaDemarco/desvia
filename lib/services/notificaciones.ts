@@ -12,13 +12,20 @@ const distanciaAproximada = (metros: number) => Math.max(50, Math.round(metros /
 
 // Cada alerta del motor deja una notificación en el centro. Si el recorrido se repite, la anterior se reemplaza y vuelve a figurar sin leer.
 export async function registrarNotificacionesDeAlertas(alertas: AlertaEvaluada[], recibidaEn: Date): Promise<void> {
-  const nuevas: Notificacion[] = alertas.map(({ afectacion, distanciaM, motivo }) => ({
+  const nuevas: Notificacion[] = alertas.map(({ afectacion, distanciaM, motivo, via }) => ({
     id: `not-sim-${afectacion.id}-${motivo}`,
-    titulo: motivo === 'nueva' ? `${ETIQUETA_TIPO[afectacion.tipo]} cerca tuyo` : `Actualización: ${afectacion.titulo}`,
+    titulo:
+      motivo === 'actualizacion'
+        ? `Actualización: ${afectacion.titulo}`
+        : via === 'zonasHabituales'
+          ? `${ETIQUETA_TIPO[afectacion.tipo]} en tu zona habitual`
+          : `${ETIQUETA_TIPO[afectacion.tipo]} cerca tuyo`,
     mensaje:
-      motivo === 'nueva'
-        ? `${afectacion.titulo} en ${afectacion.direccion}, a aprox. ${distanciaAproximada(distanciaM)} m.`
-        : `Cambió el horario o el impacto de la afectación en ${afectacion.direccion}.`,
+      motivo === 'actualizacion'
+        ? `Cambió el horario o el impacto de la afectación en ${afectacion.direccion}.`
+        : via === 'zonasHabituales'
+          ? `${afectacion.titulo} en ${afectacion.direccion}, dentro de una de tus zonas habituales.`
+          : `${afectacion.titulo} en ${afectacion.direccion}, a aprox. ${distanciaAproximada(distanciaM)} m.`,
     leida: false,
     creadaEn: recibidaEn.toISOString(),
     afectacionId: afectacion.id,

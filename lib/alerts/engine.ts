@@ -1,4 +1,4 @@
-import type { Afectacion, Preferencias, ZonaHabitual } from '../types'
+import type { Afectacion, ModosAviso, Preferencias, ZonaHabitual } from '../types'
 
 export interface Coordenada {
   latitud: number
@@ -6,11 +6,13 @@ export interface Coordenada {
 }
 
 export type MotivoAlerta = 'nueva' | 'actualizacion'
+export type ViaAviso = keyof ModosAviso
 
 export interface AlertaEvaluada {
   afectacion: Afectacion
   distanciaM: number
   motivo: MotivoAlerta
+  via: ViaAviso
 }
 
 export interface RegistroNotificada {
@@ -63,8 +65,10 @@ export function evaluarAlertas(
   yaNotificadas: YaNotificadas,
   ahora: Date = new Date(),
 ): AlertaEvaluada[] {
-  // En el prototipo solo existe el aviso con la app abierta; los otros modos se guardan pero no generan alertas.
-  if (!preferencias.recibirNotificaciones || !preferencias.modosAviso.appAbierta) return []
+  // Los tres modos se simulan en el navegador: no hay push ni ubicación en segundo plano reales.
+  const { modosAviso } = preferencias
+  if (!preferencias.recibirNotificaciones) return []
+  if (!modosAviso.appAbierta && !modosAviso.zonasHabituales && !modosAviso.alAcercarme) return []
   const radioM = preferencias.radioAnticipacionM ?? RADIO_ANTICIPACION_POR_DEFECTO_M
 
   const alertas: AlertaEvaluada[] = []
@@ -74,10 +78,19 @@ export function evaluarAlertas(
     if (preferencias.soloAltoImpacto && afectacion.impacto !== 'alto') continue
 
     const distanciaM = distanciaHaversineM(posicion, afectacion)
-    if (distanciaM > radioM) continue
+    const dentroDelRadio = distanciaM <= radioM
+    const via: ViaAviso | null =
+      modosAviso.appAbierta && dentroDelRadio
+        ? 'appAbierta'
+        : modosAviso.alAcercarme && dentroDelRadio
+          ? 'alAcercarme'
+          : modosAviso.zonasHabituales && afectacionEnZonas(afectacion, preferencias.zonasHabituales)
+            ? 'zonasHabituales'
+            : null
+    if (!via) continue
 
     const motivo = motivoDeAlerta(afectacion, yaNotificadas)
-    if (motivo) alertas.push({ afectacion, distanciaM, motivo })
+    if (motivo) alertas.push({ afectacion, distanciaM, motivo, via })
   }
   return alertas.sort((x, y) => x.distanciaM - y.distanciaM)
 }

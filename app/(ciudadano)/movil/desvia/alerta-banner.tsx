@@ -1,6 +1,7 @@
 'use client'
 
 import { AlertTriangle, X } from 'lucide-react'
+import type { ViaAviso } from '@/lib/alerts/engine'
 import type { TipoAfectacion } from '@/lib/types'
 import type { AlertaActiva } from './use-simulacion-juan'
 
@@ -13,12 +14,18 @@ const categorias: Record<TipoAfectacion, string> = {
   evento: 'Evento',
 }
 
+const textoVia: Record<ViaAviso, string> = {
+  appAbierta: 'Aviso con la app abierta.',
+  zonasHabituales: 'Aviso por zonas habituales.',
+  alAcercarme: 'Aviso al acercarte.',
+}
+
 const hora = (iso: string) => new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })
 const distanciaAproximada = (metros: number) => `aprox. ${Math.max(50, Math.round(metros / 50) * 50)} m`
 
 export function AlertaBanner({ alerta, onVerEnMapa, onCerrar }: { alerta: AlertaActiva; onVerEnMapa: () => void; onCerrar: () => void }) {
   const { principal, adicionales } = alerta
-  const { afectacion, distanciaM, motivo } = principal
+  const { afectacion, distanciaM, motivo, via } = principal
 
   return (
     <div role="alert" className="absolute inset-x-2 top-2 rounded-2xl border border-orange-200 bg-white p-4 shadow-[0_10px_30px_rgba(15,23,42,.25)]">
@@ -42,7 +49,7 @@ export function AlertaBanner({ alerta, onVerEnMapa, onCerrar }: { alerta: Alerta
 
       <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 rounded-xl bg-slate-100 p-3 text-xs">
         <Dato etiqueta="Categoría" valor={categorias[afectacion.tipo]} />
-        <Dato etiqueta="Distancia" valor={distanciaAproximada(distanciaM)} />
+        <Dato etiqueta={via === 'zonasHabituales' ? 'Zona' : 'Distancia'} valor={via === 'zonasHabituales' ? 'Zona habitual' : distanciaAproximada(distanciaM)} />
         <Dato etiqueta="Ubicación" valor={afectacion.direccion} />
         <Dato etiqueta="Actualizado" valor={`${hora(afectacion.actualizadaEn)} hs`} />
         <Dato etiqueta="Fuente" valor={afectacion.fuente} ancho />
@@ -53,7 +60,7 @@ export function AlertaBanner({ alerta, onVerEnMapa, onCerrar }: { alerta: Alerta
       <button onClick={onVerEnMapa} className="mt-3 w-full rounded-full bg-[#1551A1] py-2.5 text-sm font-bold text-white">
         Ver en el mapa
       </button>
-      <p className="mt-2 text-center text-[10px] text-slate-400">Simulación en el navegador. No es una notificación push real.</p>
+      <p className="mt-2 text-center text-[10px] text-slate-400">{textoVia[via]} Simulación en el navegador. No es una notificación push real.</p>
     </div>
   )
 }

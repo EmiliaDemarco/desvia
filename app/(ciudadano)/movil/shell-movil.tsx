@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Bell, Car, ChevronDown, Menu, X } from 'lucide-react'
 import { useDemoStore } from '@/lib/store'
@@ -19,6 +19,7 @@ const claseItem = 'flex min-h-12 w-full items-center justify-between px-6 text-l
 
 export function ShellMovil({ children }: { children: ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
   const hidratado = useHidratado()
   const sinLeer = useDemoStore((estado) => estado.notificaciones.filter((n) => !n.leida).length)
   const [abierto, setAbierto] = useState(false)
@@ -30,6 +31,10 @@ export function ShellMovil({ children }: { children: ReactNode }) {
   useEffect(() => {
     setAbierto(false)
   }, [pathname])
+
+  useEffect(() => {
+    ITEMS_DESVIA.forEach((item) => router.prefetch(item.href))
+  }, [router])
 
   useEffect(() => {
     if (!abierto) return
